@@ -1,0 +1,81 @@
+@page "/todo"
+@inject TodoService TodoService
+@using HelloBlazor.Data
+
+<h3>Todo List</h3>
+
+<div class="mb-3">
+    <input @bind="newTodoTitle" placeholder="Adaugă task" class="form-control" />
+    <button class="btn btn-primary mt-2" @onclick="AddTodo" disabled="@isAdding">
+        @(isAdding ? "Se adaugă..." : "Adaugă")
+    </button>
+</div>
+
+@if (todos.Count == 0)
+{
+    <div class="text-muted">Nu există task-uri.</div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Task</th>
+            <th>Status</th>
+            <th>Acțiuni</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var todo in todos)
+        {
+            <tr>
+                <td>@todo.Title</td>
+                <td>@(todo.IsDone ? "Terminat" : "În curs")</td>
+                <td>
+                    <button class="btn btn-success btn-sm me-1" @onclick="() => ToggleStatus(todo)">
+                        @(todo.IsDone ? "Reopen" : "Done")
+                    </button>
+                    <button class="btn btn-danger btn-sm" @onclick="() => DeleteTodo(todo.Id)">
+                        Șterge
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private string newTodoTitle = string.Empty;
+    private List<TodoItem> todos = new();
+    private bool isAdding = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        todos = await TodoService.GetAllAsync();
+    }
+
+    private async Task AddTodo()
+    {
+        if (!string.IsNullOrWhiteSpace(newTodoTitle))
+        {
+            isAdding = true;
+            var item = new TodoItem { Title = newTodoTitle };
+            await TodoService.AddAsync(item);
+            todos.Add(item);
+            newTodoTitle = string.Empty;
+            isAdding = false;
+        }
+    }
+
+    private async Task ToggleStatus(TodoItem item)
+    {
+        item.IsDone = !item.IsDone;
+        await TodoService.UpdateStatusAsync(item.Id, item.IsDone);
+    }
+
+    private async Task DeleteTodo(string id)
+    {
+        var item = todos.Find(t => t.Id == id);
+        if (item != null) todos.Remove(item);
+        await TodoService.DeleteAsync(id);
+    }
+}

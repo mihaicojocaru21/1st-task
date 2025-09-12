@@ -4,31 +4,32 @@ using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- MongoDB Configuration ---
+// MongoDB configuration
 var mongoConnectionString = builder.Configuration.GetConnectionString("MongoDb") 
                             ?? "mongodb://localhost:27017";
 var mongoDatabaseName = builder.Configuration["MongoDatabase"] ?? "HelloBlazorDb";
 
-// Register MongoDB client and database
+// Register MongoDB client
 builder.Services.AddSingleton<IMongoClient>(sp =>
     new MongoClient(mongoConnectionString));
 
+// Register database (optional if you want direct access elsewhere)
 builder.Services.AddScoped(sp =>
     sp.GetRequiredService<IMongoClient>().GetDatabase(mongoDatabaseName));
 
-// Register your service that works with MongoDB
-builder.Services.AddSingleton(new TodoService(
-    mongoConnectionString, // MongoDB connection string
-    mongoDatabaseName      // Database name
-));
+builder.Services.AddScoped<EmailService>();
 
-// --- Add Razor Components (Blazor) ---
+// Register TodoService
+builder.Services.AddSingleton<TodoService>(sp =>
+    new TodoService(mongoConnectionString, mongoDatabaseName));
+
+// Add Razor Components (Blazor)
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 var app = builder.Build();
 
-// --- Configure middleware ---
+// Middleware
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
@@ -39,7 +40,7 @@ app.UseHttpsRedirection();
 app.UseAntiforgery();
 app.MapStaticAssets();
 
-// --- Map Blazor App ---
+// Map Blazor App
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 

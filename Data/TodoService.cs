@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using MongoDB.Driver;
 
 namespace HelloBlazor.Data
@@ -6,7 +8,6 @@ namespace HelloBlazor.Data
     {
         private readonly IMongoCollection<TodoItem> _collection;
 
-        // Constructor accepts connection string and database name
         public TodoService(string connectionString, string databaseName)
         {
             var client = new MongoClient(connectionString);
@@ -14,7 +15,18 @@ namespace HelloBlazor.Data
             _collection = database.GetCollection<TodoItem>("TodoItems");
         }
 
-        public List<TodoItem> GetAll() => _collection.Find(_ => true).ToList();
-        public void Add(TodoItem item) => _collection.InsertOne(item);
+        public async Task AddAsync(TodoItem item) => await _collection.InsertOneAsync(item);
+        public async Task<List<TodoItem>> GetAllAsync() => await _collection.Find(_ => true).ToListAsync();
+        public async Task UpdateStatusAsync(string id, bool isDone)
+        {
+            var filter = Builders<TodoItem>.Filter.Eq(t => t.Id, id);
+            var update = Builders<TodoItem>.Update.Set(t => t.IsDone, isDone);
+            await _collection.UpdateOneAsync(filter, update);
+        }
+        public async Task DeleteAsync(string id)
+        {
+            var filter = Builders<TodoItem>.Filter.Eq(t => t.Id, id);
+            await _collection.DeleteOneAsync(filter);
+        }
     }
 }

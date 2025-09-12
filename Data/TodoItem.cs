@@ -7,9 +7,9 @@ namespace HelloBlazor.Data
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
+        public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
-        public string Title { get; set; }
-        public bool IsDone { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public bool IsDone { get; set; } = false;
     }
 }

@@ -1,0 +1,40 @@
+@page "/sendmail"
+@inject HelloBlazor.Data.EmailService EmailService
+
+<h3>Trimite Email</h3>
+
+<div class="mb-3">
+    <input class="form-control" @bind="to" placeholder="Destinatar" />
+</div>
+<div class="mb-3">
+    <input class="form-control" @bind="subject" placeholder="Subiect" />
+</div>
+<div class="mb-3">
+    <textarea class="form-control" @bind="body" placeholder="Mesajul tău"></textarea>
+</div>
+<button class="btn btn-primary" @onclick="SendEmailAsync">Trimite</button>
+
+@if (!string.IsNullOrEmpty(status))
+{
+    <p>@status</p>
+}
+
+@code {
+    private string to = "";
+    private string subject = "";
+    private string body = "";
+    private string status = "";
+
+    private async Task SendEmailAsync()
+    {
+        try
+        {
+            await EmailService.SendEmailAsync(to, subject, body);
+            status = "Email trimis cu succes ✅";
+        }
+        catch (Exception ex)
+        {
+            status = $"Eroare la trimitere: {ex.Message}";
+        }
+    }
+}

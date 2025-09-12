@@ -318,3 +318,7 @@
 /Users/mihai/RiderProjects/HelloBlazor/bin/Debug/net9.0/SharpCompress.dll
 /Users/mihai/RiderProjects/HelloBlazor/bin/Debug/net9.0/Snappier.dll
 /Users/mihai/RiderProjects/HelloBlazor/bin/Debug/net9.0/ZstdSharp.dll
+/Users/mihai/RiderProjects/HelloBlazor/obj/Debug/net9.0/HelloBlazor.sourcelink.json
+/Users/mihai/RiderProjects/HelloBlazor/bin/Debug/net9.0/BouncyCastle.Cryptography.dll
+/Users/mihai/RiderProjects/HelloBlazor/bin/Debug/net9.0/MailKit.dll
+/Users/mihai/RiderProjects/HelloBlazor/bin/Debug/net9.0/MimeKit.dll

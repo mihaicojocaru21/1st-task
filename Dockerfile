@@ -1,4 +1,3 @@
-# Use official .NET runtime as base image (ASP.NET Core)
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
 EXPOSE 8080
